@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using ReleasePilot.Infrastructure.Persistence.Converters;
 using ReleasePilot.Infrastructure.Persistence.Entities;
 
 namespace ReleasePilot.Infrastructure.Persistence.Configurations;
@@ -11,15 +12,49 @@ public class PromotionEntityConfiguration : IEntityTypeConfiguration<PromotionEn
         builder.ToTable("promotions");
 
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).HasColumnName("id");
-        builder.Property(x => x.ApplicationId).HasColumnName("application_id").IsRequired();
-        builder.Property(x => x.Version).HasColumnName("version").IsRequired();
-        builder.Property(x => x.TargetEnvironment).HasColumnName("target_environment").IsRequired();
-        builder.Property(x => x.Status).HasColumnName("status").IsRequired();
-        builder.Property(x => x.RequestedBy).HasColumnName("requested_by").IsRequired();
-        builder.Property(x => x.ApprovedBy).HasColumnName("approved_by");
-        builder.Property(x => x.RequestedAt).HasColumnName("requested_at").IsRequired();
-        builder.Property(x => x.CompletedAt).HasColumnName("completed_at");
+
+        builder.Property(x => x.Id)
+            .HasConversion(new PromotionIdConverter())
+            .HasColumnType("uuid")
+            .HasColumnName("id");
+
+        builder.Property(x => x.ApplicationId)
+            .HasConversion(new ApplicationIdConverter())
+            .HasColumnType("uuid")
+            .HasColumnName("application_id")
+            .IsRequired();
+
+        builder.Property(x => x.Version)
+            .HasConversion(new AppVersionConverter())
+            .HasMaxLength(100)
+            .HasColumnName("version")
+            .IsRequired();
+
+        builder.Property(x => x.TargetEnvironment)
+            .HasConversion(new EnvironmentConverter())
+            .HasMaxLength(20)
+            .HasColumnName("target_environment")
+            .IsRequired();
+
+        builder.Property(x => x.Status)
+            .HasConversion(new PromotionStatusConverter())
+            .HasMaxLength(20)
+            .HasColumnName("status")
+            .IsRequired();
+
+        builder.Property(x => x.RequestedBy)
+            .HasColumnName("requested_by")
+            .IsRequired();
+
+        builder.Property(x => x.ApprovedBy)
+            .HasColumnName("approved_by");
+
+        builder.Property(x => x.RequestedAt)
+            .HasColumnName("requested_at")
+            .IsRequired();
+
+        builder.Property(x => x.CompletedAt)
+            .HasColumnName("completed_at");
 
         builder.HasMany(x => x.StateTransitions)
                .WithOne(x => x.Promotion)
