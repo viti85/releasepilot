@@ -9,4 +9,5 @@ public interface IPromotionRepository
     Task<IReadOnlyList<Promotion>> GetActiveByApplicationAsync(ApplicationId appId, CancellationToken ct);
     Task<IReadOnlyList<Promotion>> GetCompletedByApplicationAsync(ApplicationId appId, CancellationToken ct);
     Task SaveAsync(Promotion promotion, CancellationToken ct);
+    Task<(IReadOnlyList<Promotion> Items, int TotalCount)> GetPagedByApplicationAsync(ApplicationId appId, int page, int pageSize, CancellationToken ct);
 }
