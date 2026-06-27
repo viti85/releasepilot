@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ReleasePilot.Api.Endpoints.Responses;
+using ReleasePilot.Application.Dtos;
 using ReleasePilot.Application.Queries;
 
 namespace ReleasePilot.Api.Endpoints;
@@ -18,17 +19,32 @@ public static class QueryEndpoints
             var result = await mediator.Send(query, ct);
 
             return result is null ? Results.NotFound() : Results.Ok(result);
-        });
+        })
+        .WithName("GetPromotionById")
+        .WithSummary("Get promotion by ID")
+        .WithDescription("Retrieves detailed information about a promotion, including state history")
+        .WithTags("Promotions")
+        .WithOpenApi()
+        .Produces<PromotionDetailDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
-        app.MapGet("/applications/{id:guid}/status", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        var appGroup = app.MapGroup("/applications")
+            .WithOpenApi()
+            .WithTags("Applications");
+
+        appGroup.MapGet("/{id:guid}/status", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var query = new GetApplicationStatusQuery(id);
             var result = await mediator.Send(query, ct);
 
             return Results.Ok(result);
-        });
+        })
+        .WithName("GetApplicationStatus")
+        .WithSummary("Get application status")
+        .WithDescription("Retrieves the current status of an application across all environments")
+        .Produces<ApplicationStatusDto>(StatusCodes.Status200OK);
 
-        app.MapGet("/applications/{id:guid}/promotions", async (
+        appGroup.MapGet("/{id:guid}/promotions", async (
             Guid id,
             [FromQuery] int? page,
             [FromQuery] int? pageSize,
@@ -45,7 +61,7 @@ public static class QueryEndpoints
                 ? 1 
                 : (int)Math.Ceiling((double)result.TotalCount / result.PageSize);
 
-            var response = new PagedResponse<Application.Dtos.PromotionSummaryDto>(
+            var response = new PagedResponse<PromotionSummaryDto>(
                 result.Items,
                 result.Page,
                 result.PageSize,
@@ -53,7 +69,11 @@ public static class QueryEndpoints
                 totalPages);
 
             return Results.Ok(response);
-        });
+        })
+        .WithName("GetPromotionHistory")
+        .WithSummary("Get promotion history")
+        .WithDescription("Retrieves a paginated list of promotion summaries for an application")
+        .Produces<PagedResponse<PromotionSummaryDto>>(StatusCodes.Status200OK);
 
         return app;
     }
