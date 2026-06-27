@@ -71,3 +71,5 @@ app.AddCommandEndpoints();
 app.AddQueryEndpoints();
 
 app.Run();
+
+public partial class Program { }
