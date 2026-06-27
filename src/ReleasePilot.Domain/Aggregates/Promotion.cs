@@ -144,6 +144,34 @@ public sealed class Promotion : AggregateRoot
             throw new ImmutablePromotionException(Id, Status);
     }
 
+    public static Promotion Reconstitute(
+        PromotionId id,
+        ApplicationId applicationId,
+        AppVersion version,
+        Environment targetEnvironment,
+        PromotionStatus status,
+        Guid requestedBy,
+        Guid? approvedBy,
+        DateTime requestedAt,
+        DateTime? completedAt,
+        IEnumerable<PromotionStateTransition> stateHistory)
+    {
+        var promotion = new Promotion
+        {
+            Id = id,
+            ApplicationId = applicationId,
+            Version = version,
+            TargetEnvironment = targetEnvironment,
+            Status = status,
+            RequestedBy = requestedBy,
+            ApprovedBy = approvedBy,
+            RequestedAt = requestedAt,
+            CompletedAt = completedAt,
+        };
+        promotion._stateHistory.AddRange(stateHistory);
+        return promotion;
+    }
+
     private void Transition(PromotionStatus newStatus, Guid userId)
     {
         Status = newStatus;
