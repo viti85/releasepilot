@@ -4,6 +4,8 @@ using ReleasePilot.Application;
 using ReleasePilot.Infrastructure;
 using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,17 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+
+// Register Health Checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "postgresql",
+        tags: ["db", "ready"])
+    .AddRabbitMQ(
+        rabbitConnectionString: $"amqp://{builder.Configuration["RabbitMq:Username"]}:{builder.Configuration["RabbitMq:Password"]}@{builder.Configuration["RabbitMq:Host"]}",
+        name: "rabbitmq",
+        tags: ["messaging", "ready"]);
 
 // Configure Minimal API JSON serialization to use string representations for enums
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -41,6 +54,18 @@ app.MapScalarApiReference(options =>
 });
 
 app.UseHttpsRedirection();
+
+// Map Health Check Endpoints
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.AddCommandEndpoints();
 app.AddQueryEndpoints();
