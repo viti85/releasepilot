@@ -1,7 +1,7 @@
 @ReleasePilot.Api_HostAddress = http://localhost:5286
 
 ### 1. Request a promotion to Dev
-POST http://localhost:5000/promotions
+POST http://localhost:5286/promotions
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 
 ### 2. Approve the promotion
-POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/approve
+POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/approve
 Content-Type: application/json
 
 {
@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### 3. Start deployment
-POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/start
+POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/start
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 }
 
 ### 4. Complete the promotion
-POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/complete
+POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/complete
 Content-Type: application/json
 
 {
@@ -37,7 +37,7 @@ Content-Type: application/json
 }
 
 ### 5. Request a promotion to Staging (Dev must be completed first)
-POST http://localhost:5000/promotions
+POST http://localhost:5286/promotions
 Content-Type: application/json
 
 {
@@ -48,16 +48,16 @@ Content-Type: application/json
 }
 
 ### 6. Get promotion detail
-GET http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12
+GET http://localhost:5286/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12
 
 ### 7. Get application status
-GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/status
+GET http://localhost:5286/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/status
 
 ### 8. Get promotion history (paginated)
-GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/promotions?page=1&pageSize=2
+GET http://localhost:5286/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/promotions?page=1&pageSize=2
 
 ### 9. Attempt to skip an environment
-POST http://localhost:5000/promotions
+POST http://localhost:5286/promotions
 Content-Type: application/json
 
 {
@@ -68,7 +68,7 @@ Content-Type: application/json
 }
 
 ### 10. Attempt to approve as non-approver
-POST http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12/approve
+POST http://localhost:5286/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12/approve
 Content-Type: application/json
 
 {
