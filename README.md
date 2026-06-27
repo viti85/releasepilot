@@ -299,3 +299,11 @@ dotnet test All.slnx --verbosity normal
   - **Transactional Outbox Pattern**: Store domain events inside the database transaction and publish them asynchronously via a worker process to provide reliable execution guarantees.
   - **Production Broker Topology**: Configure persistent exchange-queue layouts in RabbitMQ rather than rely on the default direct bindings.
   - **Fine-Grained Auditing**: Enrich the audit trail log records with specific action context payload definitions.
+
+---
+
+## AI Session Logs & Logs Reference
+All AI session logs, prompt histories, observations, and raw session transcripts are saved inside the [ai-session/](file:///c:/Code/releasepilot/ai-session/) folder:
+- [PROMPTS.md](file:///c:/Code/releasepilot/ai-session/PROMPTS.md): Catalog of prompts and AI modifications/corrections.
+- [OBSERVATIONS.md](file:///c:/Code/releasepilot/ai-session/OBSERVATIONS.md): Breakdown of challenges, resolutions, and compiler details.
+- [Raw Transcripts](file:///c:/Code/releasepilot/ai-session/raw/): Contains the raw JSONL session logs.
