@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ReleasePilot.Api/ReleasePilot.Api.csproj" />
+    <Project Path="src/ReleasePilot.Application/ReleasePilot.Application.csproj" />
+    <Project Path="src/ReleasePilot.Domain/ReleasePilot.Domain.csproj" />
+    <Project Path="src/ReleasePilot.Infrastructure/ReleasePilot.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ReleasePilot.Tests.Application/ReleasePilot.Tests.Application.csproj" />
+    <Project Path="tests/ReleasePilot.Tests.Domain/ReleasePilot.Tests.Domain.csproj" />
+  </Folder>
+</Solution>
