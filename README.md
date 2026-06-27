@@ -52,12 +52,12 @@ Start the Minimal API application:
 ```bash
 dotnet run --project src/ReleasePilot.Api
 ```
-The server starts listening on `http://localhost:5000` and `https://localhost:5001`.
+The server starts listening on `http://localhost:5286` and `https://localhost:5001`.
 
 ### 5. Verify system readiness
-- **Readiness check**: Open `http://localhost:5000/health/ready` in your browser. It should return a `Healthy` status (HTTP 200) once Postgres and RabbitMQ are fully reachable.
-- **Liveness check**: Open `http://localhost:5000/health/live` (always returns HTTP 200).
-- **Scalar Documentation**: Browse `http://localhost:5000/scalar/v1` to load the interactive API Reference dashboard.
+- **Readiness check**: Open `http://localhost:5286/health/ready` in your browser. It should return a `Healthy` status (HTTP 200) once Postgres and RabbitMQ are fully reachable.
+- **Liveness check**: Open `http://localhost:5286/health/live` (always returns HTTP 200).
+- **Scalar Documentation**: Browse `http://localhost:5286/scalar/v1` to load the interactive API Reference dashboard.
 
 ---
 
@@ -67,7 +67,7 @@ Use the following `curl` commands in order to execute the full promotion lifecyc
 
 ### 1. Request a promotion to Dev
 ```bash
-curl -X POST http://localhost:5000/promotions \
+curl -X POST http://localhost:5286/promotions \
   -H "Content-Type: application/json" \
   -d '{
     "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
@@ -86,7 +86,7 @@ curl -X POST http://localhost:5000/promotions \
 ### 2. Approve the promotion
 *Replace `e43b1778-f7b5-4b47-b765-df0b2df28a7b` with the ID returned in step 1.*
 ```bash
-curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/approve \
+curl -X POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/approve \
   -H "Content-Type: application/json" \
   -d '{
     "approverId": "2c253d82-f674-4b53-a5c9-94b2a8d388ab",
@@ -103,7 +103,7 @@ curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a
 
 ### 3. Start deployment
 ```bash
-curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/start \
+curl -X POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/start \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
@@ -119,7 +119,7 @@ curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a
 
 ### 4. Complete the promotion
 ```bash
-curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/complete \
+curl -X POST http://localhost:5286/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/complete \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
@@ -135,7 +135,7 @@ curl -X POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a
 
 ### 5. Request a promotion to Staging (Dev must be completed first)
 ```bash
-curl -X POST http://localhost:5000/promotions \
+curl -X POST http://localhost:5286/promotions \
   -H "Content-Type: application/json" \
   -d '{
     "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
@@ -153,7 +153,7 @@ curl -X POST http://localhost:5000/promotions \
 
 ### 6. Get promotion detail
 ```bash
-curl -X GET http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12
+curl -X GET http://localhost:5286/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12
 ```
 **Expected Response (200 OK):**
 ```json
@@ -179,7 +179,7 @@ curl -X GET http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab1
 
 ### 7. Get application status
 ```bash
-curl -X GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/status
+curl -X GET http://localhost:5286/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/status
 ```
 **Expected Response (200 OK):**
 ```json
@@ -210,7 +210,7 @@ curl -X GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d38
 
 ### 8. Get promotion history (paginated)
 ```bash
-curl -X GET "http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/promotions?page=1&pageSize=2"
+curl -X GET "http://localhost:5286/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/promotions?page=1&pageSize=2"
 ```
 **Expected Response (200 OK):**
 ```json
@@ -240,7 +240,7 @@ curl -X GET "http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d3
 
 ### 9. Attempt to skip an environment
 ```bash
-curl -X POST http://localhost:5000/promotions \
+curl -X POST http://localhost:5286/promotions \
   -H "Content-Type: application/json" \
   -d '{
     "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
@@ -262,7 +262,7 @@ curl -X POST http://localhost:5000/promotions \
 
 ### 10. Attempt to approve as non-approver
 ```bash
-curl -X POST http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12/approve \
+curl -X POST http://localhost:5286/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12/approve \
   -H "Content-Type: application/json" \
   -d '{
     "approverId": "2c253d82-f674-4b53-a5c9-94b2a8d388ab",
