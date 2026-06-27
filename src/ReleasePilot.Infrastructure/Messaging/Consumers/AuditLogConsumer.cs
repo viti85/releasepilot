@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using MassTransit;
 using ReleasePilot.Domain.Abstractions;
@@ -23,19 +24,63 @@ public class AuditLogConsumer(ReleasePilotDbContext dbContext) : IConsumer<IDoma
 {
     public async Task Consume(ConsumeContext<IDomainEvent> context)
     {
-        var domainEvent = context.Message;
-
-        var auditEntry = new AuditLogEntry
+        try
         {
-            Id = Guid.NewGuid(),
-            EventType = domainEvent.GetType().Name,
-            PromotionId = new PromotionId(domainEvent.PromotionId),
-            OccurredAt = domainEvent.OccurredAt,
-            ActingUserId = domainEvent.ActingUserId,
-            Payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
-        };
+            var domainEvent = context.Message;
 
-        dbContext.AuditLog.Add(auditEntry);
-        await dbContext.SaveChangesAsync(context.CancellationToken);
+            // Retrieve the concrete type name from SupportedMessageTypes if domainEvent is a proxy
+            string eventType = domainEvent.GetType().Name;
+            if (eventType == "IDomainEvent" && context.SupportedMessageTypes != null)
+            {
+                var urn = context.SupportedMessageTypes.FirstOrDefault();
+                if (!string.IsNullOrEmpty(urn))
+                {
+                    var lastColon = urn.LastIndexOf(':');
+                    if (lastColon >= 0)
+                    {
+                        eventType = urn.Substring(lastColon + 1);
+                    }
+                }
+            }
+
+            // Extract raw concrete payload from the MassTransit envelope
+            string payload;
+            try
+            {
+                var body = context.ReceiveContext.GetBody();
+                using var doc = JsonDocument.Parse(body);
+                if (doc.RootElement.TryGetProperty("message", out var messageElement))
+                {
+                    payload = messageElement.GetRawText();
+                }
+                else
+                {
+                    payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("PAYLOAD PARSE ERROR: " + ex);
+                payload = JsonSerializer.Serialize(domainEvent, domainEvent.GetType());
+            }
+
+            var auditEntry = new AuditLogEntry
+            {
+                Id = Guid.NewGuid(),
+                EventType = eventType,
+                PromotionId = new PromotionId(domainEvent.PromotionId),
+                OccurredAt = domainEvent.OccurredAt,
+                ActingUserId = domainEvent.ActingUserId,
+                Payload = payload
+            };
+
+            dbContext.AuditLog.Add(auditEntry);
+            await dbContext.SaveChangesAsync(context.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("CONSUME CRITICAL ERROR: " + ex);
+            throw;
+        }
     }
 }

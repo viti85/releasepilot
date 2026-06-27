@@ -10,6 +10,7 @@ using ApplicationId = ReleasePilot.Domain.ValueObjects.ApplicationId;
 
 namespace ReleasePilot.Tests.Infrastructure.Persistence.Repositories;
 
+[Collection("Database Tests")]
 public class PromotionRepositoryTests : IClassFixture<PostgreSqlContainerFixture>
 {
     private readonly PostgreSqlContainerFixture _fixture;
