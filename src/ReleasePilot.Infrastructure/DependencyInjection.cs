@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReleasePilot.Application.Abstractions;
 using ReleasePilot.Infrastructure.Messaging;
+using ReleasePilot.Infrastructure.Messaging.Consumers;
 using ReleasePilot.Infrastructure.Persistence;
 using ReleasePilot.Infrastructure.Persistence.Repositories;
 
@@ -23,6 +24,8 @@ public static class DependencyInjection
 
         services.AddMassTransit(x =>
         {
+            x.AddConsumer<AuditLogConsumer>();
+
             x.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["RabbitMq:Host"], h =>
@@ -30,6 +33,8 @@ public static class DependencyInjection
                     h.Username(configuration["RabbitMq:Username"]!);
                     h.Password(configuration["RabbitMq:Password"]!);
                 });
+                cfg.ReceiveEndpoint("audit-log", e =>
+                    e.ConfigureConsumer<AuditLogConsumer>(ctx));
                 cfg.ConfigureEndpoints(ctx);
             });
         });
