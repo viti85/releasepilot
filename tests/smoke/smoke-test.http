@@ -1,0 +1,112 @@
+# ReleasePilot API Smoke Test Script
+# Usable with VS Code REST Client or JetBrains HTTP Client.
+# Set the variables below before executing.
+
+@applicationId = 8a34b2f1-67fd-4d29-be01-f2f293b6e828
+@userId = 2c253d82-f674-4b53-a5c9-94b2a8d388ab
+@approverId = 5f31c2a3-f09b-432d-9488-81203d9cb8a9
+
+### 1. Request promotion to Dev
+# @name requestDevPromotion
+POST http://localhost:5000/promotions
+Content-Type: application/json
+
+{
+  "applicationId": "{{applicationId}}",
+  "version": "1.0.0",
+  "targetEnvironment": "Dev",
+  "requestedByUserId": "{{userId}}"
+}
+
+### Capture Dev Promotion ID from response:
+# Save the 'id' field from the response above to replace the variable below:
+@devPromotionId = {{requestDevPromotion.response.body.id}}
+
+### 2. Approve promotion (Dev)
+POST http://localhost:5000/promotions/{{devPromotionId}}/approve
+Content-Type: application/json
+
+{
+  "approverId": "{{approverId}}",
+  "approverRoles": ["approver"]
+}
+
+### 3. Start deployment (Dev)
+POST http://localhost:5000/promotions/{{devPromotionId}}/start
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+### 4. Complete promotion (Dev)
+POST http://localhost:5000/promotions/{{devPromotionId}}/complete
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+### 5. Request promotion to Staging (same version)
+# @name requestStagingPromotion
+POST http://localhost:5000/promotions
+Content-Type: application/json
+
+{
+  "applicationId": "{{applicationId}}",
+  "version": "1.0.0",
+  "targetEnvironment": "Staging",
+  "requestedByUserId": "{{userId}}"
+}
+
+### Capture Staging Promotion ID from response:
+@stagingPromotionId = {{requestStagingPromotion.response.body.id}}
+
+### 6a. Approve promotion (Staging)
+POST http://localhost:5000/promotions/{{stagingPromotionId}}/approve
+Content-Type: application/json
+
+{
+  "approverId": "{{approverId}}",
+  "approverRoles": ["approver"]
+}
+
+### 6b. Start deployment (Staging)
+POST http://localhost:5000/promotions/{{stagingPromotionId}}/start
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+### 6c. Complete promotion (Staging)
+POST http://localhost:5000/promotions/{{stagingPromotionId}}/complete
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+### 7. Request promotion to Production (same version)
+# @name requestProductionPromotion
+POST http://localhost:5000/promotions
+Content-Type: application/json
+
+{
+  "applicationId": "{{applicationId}}",
+  "version": "1.0.0",
+  "targetEnvironment": "Production",
+  "requestedByUserId": "{{userId}}"
+}
+
+### Capture Production Promotion ID from response:
+@productionPromotionId = {{requestProductionPromotion.response.body.id}}
+
+### 8. Get promotion detail
+GET http://localhost:5000/promotions/{{productionPromotionId}}
+
+### 9. Get application status (should show all 3 environments status)
+GET http://localhost:5000/applications/{{applicationId}}/status
+
+### 10. Get promotion history
+GET http://localhost:5000/applications/{{applicationId}}/promotions?page=1&pageSize=10
