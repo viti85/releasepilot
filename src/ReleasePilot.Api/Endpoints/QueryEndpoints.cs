@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ReleasePilot.Api.Endpoints.Responses;
 using ReleasePilot.Application.Dtos;
+using ReleasePilot.Application.Exceptions;
 using ReleasePilot.Application.Queries;
 
 namespace ReleasePilot.Api.Endpoints;
@@ -18,7 +19,12 @@ public static class QueryEndpoints
             var query = new GetPromotionByIdQuery(id);
             var result = await mediator.Send(query, ct);
 
-            return result is null ? Results.NotFound() : Results.Ok(result);
+            if (result is null)
+            {
+                throw new PromotionNotFoundException(id);
+            }
+
+            return Results.Ok(result);
         })
         .WithName("GetPromotionById")
         .WithSummary("Get promotion by ID")
