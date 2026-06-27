@@ -1,6 +1,77 @@
 @ReleasePilot.Api_HostAddress = http://localhost:5286
 
-GET {{ReleasePilot.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1. Request a promotion to Dev
+POST http://localhost:5000/promotions
+Content-Type: application/json
 
-###
+{
+  "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
+  "version": "1.0.0",
+  "targetEnvironment": "Dev",
+  "requestedByUserId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
+}
+
+### 2. Approve the promotion
+POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/approve
+Content-Type: application/json
+
+{
+  "approverId": "2c253d82-f674-4b53-a5c9-94b2a8d388ab",
+  "approverRoles": ["approver"]
+}
+
+### 3. Start deployment
+POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/start
+Content-Type: application/json
+
+{
+  "userId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
+}
+
+### 4. Complete the promotion
+POST http://localhost:5000/promotions/e43b1778-f7b5-4b47-b765-df0b2df28a7b/complete
+Content-Type: application/json
+
+{
+  "userId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
+}
+
+### 5. Request a promotion to Staging (Dev must be completed first)
+POST http://localhost:5000/promotions
+Content-Type: application/json
+
+{
+  "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
+  "version": "1.0.0",
+  "targetEnvironment": "Staging",
+  "requestedByUserId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
+}
+
+### 6. Get promotion detail
+GET http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12
+
+### 7. Get application status
+GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/status
+
+### 8. Get promotion history (paginated)
+GET http://localhost:5000/applications/f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab/promotions?page=1&pageSize=2
+
+### 9. Attempt to skip an environment
+POST http://localhost:5000/promotions
+Content-Type: application/json
+
+{
+  "applicationId": "f7a3f3a8-48b4-4b53-a5c9-94b2a8d388ab",
+  "version": "2.0.0",
+  "targetEnvironment": "Production",
+  "requestedByUserId": "5f31c2a3-f09b-432d-9488-81203d9cb8a9"
+}
+
+### 10. Attempt to approve as non-approver
+POST http://localhost:5000/promotions/70bbad12-a7d1-432b-91cc-88da29dfab12/approve
+Content-Type: application/json
+
+{
+  "approverId": "2c253d82-f674-4b53-a5c9-94b2a8d388ab",
+  "approverRoles": []
+}
