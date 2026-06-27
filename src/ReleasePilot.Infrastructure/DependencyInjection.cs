@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReleasePilot.Application.Abstractions;
+using ReleasePilot.Application.Ports;
+using ReleasePilot.Infrastructure.Adapters;
 using ReleasePilot.Infrastructure.Messaging;
 using ReleasePilot.Infrastructure.Messaging.Consumers;
 using ReleasePilot.Infrastructure.Persistence;
@@ -21,6 +23,10 @@ public static class DependencyInjection
 
         services.AddScoped<IPromotionRepository, PromotionRepository>();
         services.AddScoped<IEventBus, MassTransitEventBus>();
+
+        services.AddScoped<IDeploymentPort, InMemoryDeploymentPort>();
+        services.AddScoped<INotificationPort, InMemoryNotificationPort>();
+        services.AddScoped<IIssueTrackerPort, InMemoryIssueTrackerPort>();
 
         services.AddMassTransit(x =>
         {
