@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NSubstitute;
 using ReleasePilot.Application.Abstractions;
 using ReleasePilot.Application.Commands;
@@ -35,7 +35,7 @@ public class ApprovePromotionHandlerTests
         _repository.GetByIdAsync(Arg.Any<PromotionId>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<Promotion?>(pending));
 
-        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid(), ["approver"]);
+        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid());
 
         await _handler.Handle(command, CancellationToken.None);
 
@@ -52,7 +52,7 @@ public class ApprovePromotionHandlerTests
         _repository.GetByIdAsync(Arg.Any<PromotionId>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<Promotion?>(null));
 
-        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid(), ["approver"]);
+        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid());
 
         var act = () => _handler.Handle(command, CancellationToken.None);
 
@@ -66,7 +66,7 @@ public class ApprovePromotionHandlerTests
         _repository.GetByIdAsync(Arg.Any<PromotionId>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<Promotion?>(pending));
 
-        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid(), ["developer"]);
+        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid());
 
         var act = () => _handler.Handle(command, CancellationToken.None);
 

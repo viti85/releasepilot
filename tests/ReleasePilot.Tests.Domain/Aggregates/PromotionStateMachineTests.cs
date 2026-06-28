@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using ReleasePilot.Domain.Aggregates;
 using ReleasePilot.Domain.Enums;
 using ReleasePilot.Domain.Events;
@@ -23,7 +23,7 @@ public class PromotionStateMachineTests
     {
         var promotion = RequestDev();
 
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
         promotion.StartDeployment(UserId);
         promotion.Complete(UserId);
 
@@ -35,7 +35,7 @@ public class PromotionStateMachineTests
     public void RollbackPath_RequestApproveThenStartDeploymentThenRollback_StatusIsRolledBack()
     {
         var promotion = RequestDev();
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
         promotion.StartDeployment(UserId);
 
         promotion.Rollback(UserId, "deployment failed");
@@ -58,7 +58,7 @@ public class PromotionStateMachineTests
     public void Cancel_FromApprovedState_StatusIsCancelled()
     {
         var promotion = RequestDev();
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
 
         promotion.Cancel(UserId);
 
@@ -72,7 +72,7 @@ public class PromotionStateMachineTests
         promotion.DomainEvents.Should().ContainSingle()
             .Which.Should().BeOfType<PromotionRequestedEvent>();
 
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
         promotion.DomainEvents.Should().HaveCount(2);
         promotion.DomainEvents.Last().Should().BeOfType<PromotionApprovedEvent>();
 
@@ -85,7 +85,7 @@ public class PromotionStateMachineTests
         promotion.DomainEvents.Last().Should().BeOfType<PromotionCompletedEvent>();
 
         var rollbackPromotion = RequestDev();
-        rollbackPromotion.Approve(UserId, ApproverRoles);
+        rollbackPromotion.Approve(UserId);
         rollbackPromotion.StartDeployment(UserId);
         rollbackPromotion.Rollback(UserId, "deployment failed");
         rollbackPromotion.DomainEvents.Last().Should().BeOfType<PromotionRolledBackEvent>();
@@ -100,7 +100,7 @@ public class PromotionStateMachineTests
     {
         var before = DateTime.UtcNow;
         var promotion = RequestDev();
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
         promotion.StartDeployment(UserId);
         promotion.Complete(UserId);
         var after = DateTime.UtcNow;

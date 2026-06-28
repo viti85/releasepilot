@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using ReleasePilot.Domain.Aggregates;
 using ReleasePilot.Domain.Exceptions;
 using ReleasePilot.Domain.ValueObjects;
@@ -16,7 +16,7 @@ public class EnvironmentPipelineTests
     private static Promotion CreateCompleted(AppVersion version, Environment env, Promotion[]? prerequisites = null)
     {
         var p = Promotion.Request(AppId, version, env, UserId, [], prerequisites ?? []);
-        p.Approve(UserId, ApproverRoles);
+        p.Approve(UserId);
         p.StartDeployment(UserId);
         p.Complete(UserId);
         return p;

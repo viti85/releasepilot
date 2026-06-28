@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using ReleasePilot.Domain.Aggregates;
 using ReleasePilot.Domain.Enums;
 using ReleasePilot.Domain.Exceptions;
@@ -21,7 +21,7 @@ public class PromotionInvariantTests
     private static Promotion CreateCompleted(Environment env, Promotion[]? prerequisites = null)
     {
         var p = Promotion.Request(AppId, V1, env, UserId, [], prerequisites ?? []);
-        p.Approve(UserId, ApproverRoles);
+        p.Approve(UserId);
         p.StartDeployment(UserId);
         p.Complete(UserId);
         return p;
@@ -63,7 +63,7 @@ public class PromotionInvariantTests
     {
         var promotion = RequestDev();
 
-        var act = () => promotion.Approve(UserId, ["developer"]);
+        var act = () => promotion.Approve(UserId);
 
         act.Should().ThrowExactly<UnauthorizedApprovalException>();
     }
@@ -95,7 +95,7 @@ public class PromotionInvariantTests
     public void Mutate_RolledBackPromotion_ThrowsImmutablePromotionException()
     {
         var promotion = RequestDev();
-        promotion.Approve(UserId, ApproverRoles);
+        promotion.Approve(UserId);
         promotion.StartDeployment(UserId);
         promotion.Rollback(UserId, "critical bug found");
 
