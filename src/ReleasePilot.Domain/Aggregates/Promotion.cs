@@ -1,4 +1,4 @@
-using ReleasePilot.Domain.Abstractions;
+﻿using ReleasePilot.Domain.Abstractions;
 using ReleasePilot.Domain.Enums;
 using ReleasePilot.Domain.Events;
 using ReleasePilot.Domain.Exceptions;
@@ -77,16 +77,13 @@ public sealed class Promotion : AggregateRoot
         return promotion;
     }
 
-    public void Approve(Guid approverId, IReadOnlyCollection<string> approverRoles)
+    public void Approve(Guid approverId)
     {
         GuardNotTerminal();
 
         if (Status != PromotionStatus.Pending)
             throw new InvalidOperationException($"Cannot approve a promotion in '{Status}' status.");
-
-        if (!approverRoles.Contains("approver", StringComparer.OrdinalIgnoreCase))
-            throw new UnauthorizedApprovalException(approverId.ToString());
-
+                
         ApprovedBy = approverId;
         Transition(PromotionStatus.Approved, approverId);
         Raise(new PromotionApprovedEvent(Id.Value, approverId));

@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using ReleasePilot.Application.Abstractions;
 using ReleasePilot.Application.Commands;
 using ReleasePilot.Application.Exceptions;
@@ -16,7 +16,7 @@ public sealed class ApprovePromotionHandler(
         var promotion = await repository.GetByIdAsync(id, ct)
             ?? throw new PromotionNotFoundException(command.PromotionId);
 
-        promotion.Approve(command.ApproverId, command.ApproverRoles);
+        promotion.Approve(command.ApproverId);
 
         await repository.SaveAsync(promotion, ct);
         await eventBus.PublishAsync(promotion.DomainEvents, ct);

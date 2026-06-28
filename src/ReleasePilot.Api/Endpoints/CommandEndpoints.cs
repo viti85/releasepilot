@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -37,10 +37,7 @@ public static class CommandEndpoints
 
         group.MapPost("/{id:guid}/approve", async (Guid id, ApprovePromotionRequest request, IMediator mediator, CancellationToken ct) =>
         {
-            var command = new ApprovePromotionCommand(
-                id,
-                request.ApproverId,
-                request.ApproverRoles);
+            var command = new ApprovePromotionCommand(id,request.ApproverId);
 
             await mediator.Send(command, ct);
 
