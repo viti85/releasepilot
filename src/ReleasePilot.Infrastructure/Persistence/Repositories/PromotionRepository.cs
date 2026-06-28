@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ReleasePilot.Application.Abstractions;
 using ReleasePilot.Domain.Aggregates;
 using ReleasePilot.Domain.Enums;
@@ -78,7 +78,7 @@ public sealed class PromotionRepository(ReleasePilotDbContext context) : IPromot
             var existingCount = existing.StateTransitions.Count;
             foreach (var t in promotion.StateHistory.Skip(existingCount))
             {
-                existing.StateTransitions.Add(new PromotionStateTransitionEntity
+                context.StateTransitions.Add(new PromotionStateTransitionEntity
                 {
                     Id = Guid.NewGuid(),
                     PromotionId = promotion.Id,
