@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -120,6 +120,12 @@ public sealed class DomainExceptionMiddleware
             DomainException => (
                 StatusCodes.Status422UnprocessableEntity,
                 GetErrorTitle(ex),
+                ex.Message,
+                type
+            ),
+            InvalidOperationException => (
+                StatusCodes.Status422UnprocessableEntity,
+                "Invalid operation",
                 ex.Message,
                 type
             ),
