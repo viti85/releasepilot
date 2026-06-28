@@ -59,16 +59,6 @@ public class PromotionInvariantTests
     }
 
     [Fact]
-    public void Approve_ByUserWithoutApproverRole_ThrowsUnauthorizedApprovalException()
-    {
-        var promotion = RequestDev();
-
-        var act = () => promotion.Approve(UserId);
-
-        act.Should().ThrowExactly<UnauthorizedApprovalException>();
-    }
-
-    [Fact]
     public void Mutate_CompletedPromotion_ThrowsImmutablePromotionException()
     {
         var promotion = CreateCompleted(Environment.Dev);

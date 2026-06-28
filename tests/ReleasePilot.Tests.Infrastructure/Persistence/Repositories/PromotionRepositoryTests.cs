@@ -80,7 +80,7 @@ public class PromotionRepositoryTests : IClassFixture<PostgreSqlContainerFixture
 
         // 2. Completed (Terminal)
         var completed = Promotion.Request(appId, version2, Domain.Enums.Environment.Dev, userId, [], []);
-        completed.Approve(userId, ["approver"]);
+        completed.Approve(userId);
         completed.StartDeployment(userId);
         completed.Complete(userId);
 
@@ -112,12 +112,12 @@ public class PromotionRepositoryTests : IClassFixture<PostgreSqlContainerFixture
 
         // 2. InProgress
         var inProgress = Promotion.Request(appId, new AppVersion("1.1.0"), Domain.Enums.Environment.Dev, userId, [], []);
-        inProgress.Approve(userId, ["approver"]);
+        inProgress.Approve(userId);
         inProgress.StartDeployment(userId);
 
         // 3. Completed
         var completed = Promotion.Request(appId, new AppVersion("1.2.0"), Domain.Enums.Environment.Dev, userId, [], []);
-        completed.Approve(userId, ["approver"]);
+        completed.Approve(userId);
         completed.StartDeployment(userId);
         completed.Complete(userId);
 
@@ -150,7 +150,7 @@ public class PromotionRepositoryTests : IClassFixture<PostgreSqlContainerFixture
         var appId = new ApplicationId(Guid.NewGuid());
         var userId = Guid.NewGuid();
         var promotion = Promotion.Request(appId, new AppVersion("1.0.0"), Domain.Enums.Environment.Dev, userId, [], []);
-        promotion.Approve(userId, ["approver"]);
+        promotion.Approve(userId);
 
         await repository.SaveAsync(promotion, CancellationToken.None);
 

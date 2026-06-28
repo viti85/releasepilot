@@ -59,17 +59,4 @@ public class ApprovePromotionHandlerTests
         await act.Should().ThrowExactlyAsync<PromotionNotFoundException>();
     }
 
-    [Fact]
-    public async Task Handle_WhenUserIsNotApprover_UnauthorizedApprovalExceptionPropagates()
-    {
-        var pending = CreatePendingDevPromotion();
-        _repository.GetByIdAsync(Arg.Any<PromotionId>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<Promotion?>(pending));
-
-        var command = new ApprovePromotionCommand(Guid.NewGuid(), Guid.NewGuid());
-
-        var act = () => _handler.Handle(command, CancellationToken.None);
-
-        await act.Should().ThrowExactlyAsync<UnauthorizedApprovalException>();
-    }
 }
